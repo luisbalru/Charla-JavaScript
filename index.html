@@ -1,0 +1,382 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Objetos avanzados en JS</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>PROGRAMACIÓN EN JAVASCRIPT</h1>
+					<h3>Objetos avanzados</h3>
+					<p>
+						<small> Creado por <a href="https://www.linkedin.com/in/luis-balderas-ruiz-13614a93/">Luis Balderas Ruiz</a></small> <br>
+						<small> <i class="fab fa-github"></i> <a href="https://github.com/luisbalru">luisbalru</a></small><br>
+						<small> Escríbeme si necesitas ayuda <a href="mailto:balderasruizluis@gmail.com" target="_top">aquí</a></small><br>
+						<small> Material de la charla en este <a href="">repositorio</a></small>
+					</p>
+				</section>
+
+				<section id="contents">
+					<section>
+						<h1>CONTENIDO</h1>
+					</section>
+					<section id="fragments">
+						<ul>
+							<li type="circle">Prototipado en JavaScript</li>
+							<li type="circle">Nuevo estandar ES2015: Clases y módulos</li>
+							<li type="circle">Subclases y uso de la herencia</li>
+						</ul>
+					</section>
+				</section>
+
+				<section id="prototype">
+					<section>
+						<h1>Prototipado</h1>
+					</section>
+					<section id="objects">
+						<h2>Objetos en JavaScript</h2>
+						<pre><code class="js" data-trim contenteditable>
+										var jdoe = {fname:'Jane', lname:'Doe', age:32, fullName:function() {return this.fname + ' ' + this.lname}}
+										document.write('First name: ');
+										document.write(jdoe.fname);
+										document.write('<hr>');
+										document.write('Full name: ');
+										document.write(jdoe.fullName());
+						</code></pre>
+						<p> Creamos un objeto <font color="red">jdoe</font> con atributos <font color="blue">fname,lname,age</font></p>
+						<p> Además, cuenta con el método <font color="green">fullName()</font></p>
+					</section>
+
+					<section id="js-prot">
+						<h2>Prototipado en JavaScript</h2>
+						<h6>Definición de <font color="red">patrones</font></h6>
+						<pre><code lang="js" data-trim contenteditable>
+							var Person = function(fname, lname, age) {
+								this.fname = fname;
+								this.lname = lname;
+								this.age = age;
+								this.fullName = function() {
+									return this.fname + ' ' + this.lname;
+								}
+							}
+							var jdoe = new Person('Jane', 'Doe', 32);
+							document.write('First name: ');
+							document.write(jdoe.fname);
+							document.write('<hr>');
+							document.write('Full name: ');
+							document.write(jdoe.fullName());
+						</code></pre>
+					</section>
+
+					<section id="js-prot2">
+						<h2>Prototipado en JavaScript</h2>
+						<p>Se pueden añadir nuevos métodos a nuestro prototipo con la orden <font color="blue">prototype</font></p>
+						<pre><code lang="js" data-trim contenteditable>
+							Person.prototype.isOldEnoughToVote = function() {
+								return this.age >= 18;
+							}
+							Person.prototype.changeAge = function(age) {
+								//test if age is an integer:
+								if (!(Number(age) === age && age % 1 === 0)) {
+									return;
+								}
+								//test if age is >= 0
+								if (age <= 0) {
+									return;
+								}
+								this.age = age;
+							}
+						</code></pre>
+					</section>
+
+					<section id="js-prot3">
+						<h2>Composición de prototipados</h2>
+						<li type="square">Datos miembro en un prototipo formados por objetos de otro prototipo</li>
+					</section>
+
+					<section id="js-prot4">
+						<pre><code lang="js" data-trim contenteditable>
+							var Person = function(fname, lname, age) {
+								this.fname = fname;
+								this.lname = lname;
+								this.age = age;
+								this.fullName = function() {
+									return this.fname + ' ' + this.lname;
+								}
+							}
+
+							var Team = function(teamName, sport) {
+								this.teamName = teamName;
+								this.sport = sport;
+								this.players = [];
+							        this.addPlayer = function(person) {
+									this.players.push(person);
+								}
+							        this.toString = function() {
+									var str = '<strong>' + this.teamName + '</strong>';
+									str += '<ul>';
+									for (let p in this.players) {
+										if (this.players.hasOwnProperty(p)) {
+											let person = this.players[p];
+											str += '<li>' + person.fname + ' ' + person.lname + '</li>';
+										}
+									}
+									str += '</ul>';
+									return str;
+								}
+							}
+						</code></pre>
+						<p>El método <font color="green">addPlayer(person)</font> añade un objeto <font color="red">Person</font> al array
+							<font color="blue">this.players</font>
+					</section>
+
+					<section id="exerc">
+						<h2> Ejercicio: </h2>
+						<ul>
+							<li>Crea un archivo vehiculos.html</li>
+							<li>Crea un prototipo Vehiculo representando a un vehículo que tenga como atributos el tipo ('coche','autobús','moto'...), año de matriculación, potencia (en CV), precio y un método para imprimir toda la información</li>
+						</ul>
+					</section>
+
+					<section id="exerc2">
+						<h2>Ejercicio:</h2>
+						<ul>
+							<li>Crea un prototipo Flota representando la flota de vehículos de una empresa. Como atributos, el nombre de la empresa, una lista de vehículos y tres métodos: añadir un vehículo (objeto Vehiculo), calcular la edad media de los vehículos e imprimir todos los vehículos.</li>
+							<li> El HTML contendrá un formulario, una sección para mostrar la flota actual y un botón para calcular la edad media de los vehículos almacenados.</li>
+						</ul>
+					</section>
+
+					<section>
+						<ul>
+							<li>Cuando se cargue la página, un manejador de evento window.onload instancia un nuevo objeto Flota. Añade códig para añadir nuevos vehículos, mostrar la flota actual y la edad media de los vehículos</li>
+						</ul>
+						<p>Los dos últimos apartados son <font color="red">opcionales</font>. Gemma indicará cuándo y dónde entregarlo para ser evaluado como nota extra.
+					</section>
+
+					<section data-gif="repeat"><img src="img/luck.gif" /></section>
+				</section>
+
+				<section>
+					<section>
+						<h1>ES2015</h1>
+					</section>
+
+					<section>
+						<h2>Clases</h2>
+					</section>
+
+					<section>
+						<pre><code lang="js" data-trim contenteditable>
+							class Person {
+								constructor(fname, lname, age) {
+									this.fname = fname;
+									this.lname = lname;
+									this.age = age;
+								}
+								fullName() {
+									return this.fname + ' ' + this.lname;
+								}
+							}
+							var jdoe = new Person('Jane', 'Doe', 32);
+						</code></pre>
+					</section>
+
+					<section>
+						<h2>Clases de clases
+					</section>
+
+					<section>
+						<pre><code lang="js" data-trim contenteditable>
+									class Person {
+										constructor(fname, lname, age) {
+											this.fname = fname;
+											this.lname = lname;
+											this.age = age;
+										}
+									}
+
+									class Team {
+										constructor(teamName, sport) {
+											this.teamName = teamName;
+											this.sport = sport;
+											this.players = [];
+										}
+										addPlayer(person) {
+											if (person.age >= 18) {
+												this.players.push(person);
+												return true;
+											}
+											return false;
+										}
+									}
+						</code></pre>
+						Un objeto <font color="red">Team</font> con atributo de la clase una lista de objetos <font color="red">Person</font>
+					</section>
+
+					<section>
+						<h1>Módulos</h1>
+						<h4>Fichero que exporta algo: funciones, contantes...</h4>
+						<h5>Tienen su propio ámbito</h5>
+					</section>
+
+					<section>
+						<h2> En un archivo .js...</h2>
+						<pre><code lang="js" data-trim contenteditable>
+							export const val = 1234;
+							export function doubleIt(x) {
+								return 2 * x;
+							}
+
+							export function tripleIt(x) {
+								return 3 * x;
+							}
+						</code></pre>
+						<h2> En otro .js...</h2>
+						<pre><code lang="js" data-trim contenteditable>
+							import { val, doubleIt } from './mod1';
+							document.write(val);
+							document.write(doubleIt(4));
+						</code></pre>
+					</section>
+				</section>
+
+				<section>
+					<section>
+						<h1>Herencia</h1>
+					</section>
+
+					<section>
+						<h2> Mecanismo que facilita la creación de nuevas clases a partir de clases ya existentes (superclases)</h2>
+						<p> Las nuevas clases reciben de su superclase sus atributos y métodos, añadiendo nuevas funcionalidades específicas </p>
+					</section>
+
+					<section>
+						<p> Superclase</p>
+						<pre><code lang="js" data-trim contenteditable>
+							class Pet {
+								constructor(name, color) {
+									this.name = name;
+									this.color = color;
+									this.animaltype = 'animal';
+								}
+								toString() {
+									return this.name + ' - a ' + this.color + ' ' + 				this.animaltype;
+								}
+								speak() {
+									return 'ehh';
+								}
+							}
+						</code></pre>
+					</section>
+
+					<section>
+						<p> Clase heredera </p>
+						<pre><code lang="js" data-trim contenteditable>
+							class Bird extends Pet {
+								constructor(name, color, wingspan) {
+									super(name, color);
+									this.animaltype = 'bird';
+									this.wingspan = wingspan;
+								}
+								toString() {
+									return this.name + ' - a ' + this.color + ' ' + 				this.animaltype
+										+ ' with wingspan of ' + this.wingspan + ' centimeters';
+								}
+								speak() {
+									return 'cheep';
+								}
+							}
+						</code></pre>
+					</section>
+
+					<section>
+						<p> Nuevo ejemplo </p>
+						<pre><code lang="js" data-trim contenteditable>
+							class Person {
+								constructor(fname, lname, age) {
+									this.fname = fname;
+									this.lname = lname;
+									this.age = age;
+								}
+								toString() {
+									return this.fname + ' ' + this.lname;
+								}
+							}
+							class Player extends Person {
+								constructor(fname, lname, age, jerseyNumber) {
+									super(fname, lname, age);
+									this.jerseyNumber = jerseyNumber;
+								}
+								toString() {
+									return super.toString() + ' (#' + this.jerseyNumber + ')';
+								}
+							}
+						</code></pre>
+					</section>
+
+					<section>
+						<h1>¿Para qué podría servirnos?</h1>
+					</section>
+				</section>
+
+				<section>
+					<h1>¿Dudas?</h1>
+					<img src="img/chiste.jpg" />
+				</section>
+
+				<section>
+					<h1>¡Muchas gracias por la atención!</h1>
+					<small> Creado por <a href="https://www.linkedin.com/in/luis-balderas-ruiz-13614a93/">Luis Balderas Ruiz</a></small> <br>
+					<small> <i class="fab fa-github"></i> <a href="https://github.com/luisbalru">luisbalru</a></small><br>
+					<small><i class="fab fa-twitter"></i> <a href="https://twitter.com/LuisBalR18">@LuisBalR18</a></small><br>
+						<small> Escríbeme si necesitas ayuda <a href="mailto:balderasruizluis@gmail.com" target="_top">aquí</a></small><br>
+
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			Reveal.configure({backgroundTransition:'zoom'})
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+			Reveal.addEventListener('slidechanged', function(event) {
+				var gifAttr = event.currentSlide.getAttribute('data-gif');
+				if (gifAttr && gifAttr === 'repeat') {
+					var img = event.currentSlide.querySelector('img');
+					var gif = img.getAttribute('src');
+
+					img.setAttribute('src', gif + '?t=' + (new Date().getTime()));
+				}
+			}, false);
+		</script>
+	</body>
+</html>
